@@ -239,3 +239,22 @@ export async function convertMessage(data: ConvertRequest): Promise<ConvertRespo
   });
 }
 
+/**
+ * MBTI 테스트 시작
+ */
+export interface StartMbtiTestRequest {
+  user_id: string;
+}
+
+export interface StartMbtiTestResponse {
+  session_id: string;
+  first_question: string;
+}
+
+export async function startMbtiTest(userId: string): Promise<StartMbtiTestResponse> {
+  return apiFetch<StartMbtiTestResponse>('/mbti/start', {
+    method: 'POST',
+    body: JSON.stringify({ user_id: userId }),
+  });
+}
+

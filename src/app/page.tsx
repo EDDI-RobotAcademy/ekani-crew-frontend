@@ -20,7 +20,7 @@ export default function Home() {
       </section>
 
       {/* 서비스 카드 */}
-      <section className="grid md:grid-cols-2 gap-6">
+      <section className="grid md:grid-cols-3 gap-6">
         <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition">
           <div className="text-4xl mb-4">💬</div>
           <h2 className="text-xl font-bold text-pink-500 mb-2">MBTI 상담</h2>
@@ -42,6 +42,18 @@ export default function Home() {
           </p>
           <Link href="/convert" className="text-purple-400 font-medium hover:underline">
             변환하기 →
+          </Link>
+        </div>
+
+        <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition">
+          <div className="text-4xl mb-4">🧠</div>
+          <h2 className="text-xl font-bold text-indigo-500 mb-2">MBTI 테스트</h2>
+          <p className="text-gray-500 mb-4">
+            AI와의 대화로 나의 MBTI를 알아보세요.
+            자연스러운 질문으로 정확한 결과를 제공합니다.
+          </p>
+          <Link href="/mbti-test" className="text-indigo-400 font-medium hover:underline">
+            테스트하기 →
           </Link>
         </div>
       </section>
