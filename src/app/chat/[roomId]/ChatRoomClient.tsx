@@ -128,98 +128,97 @@ export default function ChatRoomClient({ roomId }: ChatRoomClientProps) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white rounded-3xl shadow-lg flex flex-col overflow-hidden" style={{ height: 'calc(100vh - 200px)' }}>
-          {/* 채팅방 헤더 */}
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => router.push('/chat')}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <div>
-                <h1 className="font-bold text-gray-800">채팅방</h1>
-                <p className="text-xs text-gray-500">Room: {roomId}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  isConnected ? 'bg-green-500' : 'bg-gray-400'
-                }`}
-              ></span>
-              <span className="text-sm text-gray-500">
-                {isConnecting ? '연결 중...' : isConnected ? '연결됨' : '연결 끊김'}
-              </span>
+        {/* 채팅방 헤더 */}
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push('/chat')}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <div>
+              <h1 className="font-bold text-gray-800">채팅방</h1>
+              <p className="text-xs text-gray-500">Room: {roomId}</p>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                isConnected ? 'bg-green-500' : 'bg-gray-400'
+              }`}
+            ></span>
+            <span className="text-sm text-gray-500">
+              {isConnecting ? '연결 중...' : isConnected ? '연결됨' : '연결 끊김'}
+            </span>
+          </div>
+        </div>
 
-          {/* 메시지 영역 */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {error && (
-              <div className="bg-red-100 text-red-600 p-3 rounded-lg text-center text-sm">
-                {error}
-              </div>
-            )}
+        {/* 메시지 영역 */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {error && (
+            <div className="bg-red-100 text-red-600 p-3 rounded-lg text-center text-sm">
+              {error}
+            </div>
+          )}
 
-            {messages.length === 0 && !error && (
-              <div className="text-center text-gray-400 py-12">
-                <p className="text-4xl mb-4">👋</p>
-                <p>대화를 시작해보세요!</p>
-              </div>
-            )}
+          {messages.length === 0 && !error && (
+            <div className="text-center text-gray-400 py-12">
+              <p className="text-4xl mb-4">👋</p>
+              <p>대화를 시작해보세요!</p>
+            </div>
+          )}
 
-            {messages.map((msg) => (
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.isMine ? 'justify-end' : 'justify-start'}`}
+            >
               <div
-                key={msg.id}
-                className={`flex ${msg.isMine ? 'justify-end' : 'justify-start'}`}
+                className={`max-w-[70%] px-4 py-3 rounded-2xl ${
+                  msg.isMine
+                    ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
               >
-                <div
-                  className={`max-w-[70%] px-4 py-3 rounded-2xl ${
-                    msg.isMine
-                      ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white'
-                      : 'bg-gray-100 text-gray-800'
+                <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                <p
+                  className={`text-xs mt-1 ${
+                    msg.isMine ? 'text-white/70' : 'text-gray-400'
                   }`}
                 >
-                  <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                  <p
-                    className={`text-xs mt-1 ${
-                      msg.isMine ? 'text-white/70' : 'text-gray-400'
-                    }`}
-                  >
-                    {msg.timestamp.toLocaleTimeString('ko-KR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </p>
-                </div>
+                  {msg.timestamp.toLocaleTimeString('ko-KR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
               </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* 입력 영역 */}
-          <div className="px-4 py-3 border-t border-gray-100">
-            <div className="flex gap-2">
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="메시지를 입력하세요..."
-                disabled={!isConnected}
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:border-purple-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                rows={1}
-              />
-              <button
-                onClick={handleSend}
-                disabled={!isConnected || !input.trim()}
-                className="px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-2xl font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                전송
-              </button>
             </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* 입력 영역 */}
+        <div className="px-4 py-3 border-t border-gray-100">
+          <div className="flex gap-2">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="메시지를 입력하세요..."
+              disabled={!isConnected}
+              className="flex-1 px-4 py-3 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:border-purple-400 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              rows={1}
+            />
+            <button
+              onClick={handleSend}
+              disabled={!isConnected || !input.trim()}
+              className="px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-2xl font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              전송
+            </button>
           </div>
         </div>
       </div>
