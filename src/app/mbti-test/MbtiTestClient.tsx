@@ -52,8 +52,9 @@ export default function MbtiTestClient() {
     try {
       const response = await startMbtiTest('human');
       setSessionId(response.session.id);
+      // greeting 메시지를 먼저 표시 (아직 질문 시작 전)
       setMessages([{ role: 'assistant', content: response.first_question.content }]);
-      setQuestionNumber(1);
+      setQuestionNumber(0);  // greeting은 질문이 아님
       setIsStarted(true);
     } catch (err: any) {
       if (err.message?.includes('401')) {
@@ -96,7 +97,6 @@ export default function MbtiTestClient() {
             ...prev,
             {
               role: 'assistant',
-              content: '분석이 완료되었습니다! 당신의 MBTI는 INFP입니다.\n\n각 차원별 결과:\n- E 32% / I 68%\n- S 41% / N 59%\n- T 28% / F 72%\n- J 35% / P 65%'
             }
           ]);
         }, 2000);
@@ -114,6 +114,7 @@ export default function MbtiTestClient() {
   // 현재 진행 단계 표시
   const getPhaseText = () => {
     if (isCompleted) return '테스트 완료!';
+    if (questionNumber === 0) return '시작하기';
     return `진행 중: ${questionNumber}/${TOTAL_QUESTIONS}`;
   };
 
