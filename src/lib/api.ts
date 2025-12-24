@@ -242,19 +242,33 @@ export async function convertMessage(data: ConvertRequest): Promise<ConvertRespo
 /**
  * MBTI 테스트 시작
  */
-export interface StartMbtiTestRequest {
+export type MbtiTestType = 'human' | 'ai';
+
+export interface MbtiTestSession {
+  id: string;
   user_id: string;
+  test_type: MbtiTestType;
+  status: 'IN_PROGRESS' | 'COMPLETED';
+  created_at: string;
+  questions: string[];
+  answers: Record<string, unknown>[];
+  current_question_index: number;
+}
+
+export interface MbtiMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  source: 'human' | 'ai';
 }
 
 export interface StartMbtiTestResponse {
-  session_id: string;
-  first_question: string;
+  session: MbtiTestSession;
+  first_question: MbtiMessage;
 }
 
-export async function startMbtiTest(userId: string): Promise<StartMbtiTestResponse> {
-  return apiFetch<StartMbtiTestResponse>('/mbti-test/start', {
+export async function startMbtiTest(testType: MbtiTestType = 'ai'): Promise<StartMbtiTestResponse> {
+  return apiFetch<StartMbtiTestResponse>(`/mbti-test/start?test_type=${testType}`, {
     method: 'POST',
-    body: JSON.stringify({ user_id: userId }),
   });
 }
 

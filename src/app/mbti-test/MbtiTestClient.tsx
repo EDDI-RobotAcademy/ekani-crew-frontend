@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { startMbtiTest, checkAuthStatus, generateAIQuestion, ChatMessageDTO } from '@/lib/api';
+import { startMbtiTest, checkAuthStatus, generateAIQuestion, ChatMessageDTO, MbtiTestType } from '@/lib/api';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -21,7 +21,7 @@ export default function MbtiTestClient() {
   const [sessionId, setSessionId] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [userId, setUserId] = useState<string>('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -37,11 +37,9 @@ export default function MbtiTestClient() {
     const checkUser = async () => {
       try {
         const status = await checkAuthStatus();
-        if (status.logged_in && status.user_id) {
-          setUserId(status.user_id);
-        }
+        setIsLoggedIn(status.logged_in);
       } catch {
-        // 로그인 상태가 아니면 무시
+        setIsLoggedIn(false);
       } finally {
         setIsCheckingAuth(false);
       }
@@ -49,23 +47,22 @@ export default function MbtiTestClient() {
     checkUser();
   }, []);
 
-  const handleStart = async () => {
-    if (!userId) {
-      setError('로그인이 필요합니다.');
-      return;
-    }
-
+  const handleStart = async (testType: MbtiTestType = 'ai') => {
     setIsLoading(true);
     setError('');
 
     try {
-      const response = await startMbtiTest(userId);
-      setSessionId(response.session_id);
-      setMessages([{ role: 'assistant', content: response.first_question }]);
+      const response = await startMbtiTest(testType);
+      setSessionId(response.session.id);
+      setMessages([{ role: 'assistant', content: response.first_question.content }]);
       setQuestionNumber(1);
       setIsStarted(true);
     } catch (err: any) {
-      setError(err.message || 'MBTI 테스트 시작 중 오류가 발생했습니다.');
+      if (err.message?.includes('401')) {
+        setError('로그인이 필요합니다.');
+      } else {
+        setError(err.message || 'MBTI 테스트 시작 중 오류가 발생했습니다.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -167,7 +164,7 @@ export default function MbtiTestClient() {
               예상 소요시간: 약 10-15분
             </p>
           </div>
-          {!isCheckingAuth && !userId && (
+          {!isCheckingAuth && !isLoggedIn && (
             <div className="mb-4 p-4 bg-yellow-100 text-yellow-700 rounded-lg">
               로그인 후 테스트를 진행할 수 있습니다.
               <button
@@ -184,8 +181,8 @@ export default function MbtiTestClient() {
             </div>
           )}
           <button
-            onClick={handleStart}
-            disabled={isLoading || isCheckingAuth || !userId}
+            onClick={() => handleStart('ai')}
+            disabled={isLoading || isCheckingAuth || !isLoggedIn}
             className="cursor-pointer px-8 py-4 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading || isCheckingAuth ? '로딩 중...' : '검사 시작하기'}
