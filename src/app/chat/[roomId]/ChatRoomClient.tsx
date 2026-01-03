@@ -75,7 +75,8 @@ export default function ChatRoomClient({ roomId }: ChatRoomClientProps) {
 
   // 채팅 히스토리 로드 및 읽음 처리
   useEffect(() => {
-    if (!user?.id || !roomId) return;
+    const userId = user?.id;
+    if (!userId || !roomId) return;
 
     const loadHistoryAndMarkRead = async () => {
       try {
@@ -85,13 +86,13 @@ export default function ChatRoomClient({ roomId }: ChatRoomClientProps) {
           id: msg.id,
           senderId: msg.sender_id,
           content: msg.content,
-          isMine: msg.sender_id === user.id,
+          isMine: msg.sender_id === userId,
           timestamp: new Date(msg.created_at),
         }));
         setMessages(loadedMessages);
 
         // 채팅방 읽음 처리
-        await markRoomAsRead(roomId, user.id);
+        await markRoomAsRead(roomId, userId);
       } catch (err) {
         console.error('채팅 히스토리 로드 실패:', err);
       }
