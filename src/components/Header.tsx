@@ -51,12 +51,6 @@ export default function Header() {
             >
               변환
             </Link>
-            <Link
-              href="/matching"
-              className="px-3 py-1.5 text-gray-600 hover:text-rose-600 text-sm font-medium transition"
-            >
-              매칭
-            </Link>
 
             {/* 커뮤니티 드롭다운 */}
             <div className="relative" ref={communityMenuRef}>
