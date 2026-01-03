@@ -594,6 +594,59 @@ export interface BalanceGame {
 }
 
 /**
+ * 밸런스 게임 목록 아이템 응답
+ */
+export interface BalanceGameListItem {
+  id: string;
+  question: string;
+  option_left: string;
+  option_right: string;
+  left_percentage: number;
+  right_percentage: number;
+  comment_count: number;
+  is_votable: boolean;
+  week_of: string;
+  created_at: string;
+}
+
+/**
+ * 밸런스 게임 목록 응답
+ */
+export interface BalanceGameListResponse {
+  items: BalanceGameListItem[];
+}
+
+/**
+ * 밸런스 게임 상세 댓글 응답
+ */
+export interface BalanceGameDetailComment {
+  id: string;
+  author_id: string;
+  author_mbti: string | null;
+  content: string;
+  created_at: string;
+}
+
+/**
+ * 밸런스 게임 상세 응답
+ */
+export interface BalanceGameDetail {
+  id: string;
+  question: string;
+  option_left: string;
+  option_right: string;
+  week_of: string;
+  total_votes: number;
+  left_votes: number;
+  right_votes: number;
+  left_percentage: number;
+  right_percentage: number;
+  comments: BalanceGameDetailComment[];
+  is_votable: boolean;
+  created_at: string;
+}
+
+/**
  * 현재 밸런스 게임 조회
  */
 export async function getCurrentBalanceGame(): Promise<BalanceGame | null> {
@@ -602,6 +655,20 @@ export async function getCurrentBalanceGame(): Promise<BalanceGame | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * 밸런스 게임 목록 조회
+ */
+export async function getBalanceGameList(): Promise<BalanceGameListResponse> {
+  return apiFetch<BalanceGameListResponse>('/community/balance');
+}
+
+/**
+ * 밸런스 게임 상세 조회
+ */
+export async function getBalanceGameDetail(gameId: string): Promise<BalanceGameDetail> {
+  return apiFetch<BalanceGameDetail>(`/community/balance/${gameId}`);
 }
 
 /**
