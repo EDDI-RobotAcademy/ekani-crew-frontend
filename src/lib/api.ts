@@ -657,7 +657,6 @@ export interface BalanceGame {
   option_left: string;
   option_right: string;
   week_of: string;
-  is_active: boolean;
 }
 
 /**
