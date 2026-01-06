@@ -503,6 +503,24 @@ export interface ChatWebSocketResponse {
   content: string;
 }
 
+/**
+ * 채팅 시스템 메시지 타입 (상대방 나감 등)
+ */
+export interface ChatSystemMessage {
+  type: 'partner_left';
+  room_id: string;
+  user_id: string;
+}
+
+/**
+ * 유저 차단
+ */
+export async function blockUser(blockedUserId: string): Promise<void> {
+  return apiFetch<void>(`/user/${blockedUserId}/block`, {
+    method: 'POST',
+  });
+}
+
 // ============================================
 // 커뮤니티 API
 // ============================================
