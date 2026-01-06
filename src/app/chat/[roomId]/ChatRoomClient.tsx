@@ -123,7 +123,7 @@ export default function ChatRoomClient({ roomId }: ChatRoomClientProps) {
       try {
         const data: ChatWebSocketResponse = JSON.parse(event.data);
         const newMessage: Message = {
-          id: data.message_id,
+          id: data.id,
           senderId: data.sender_id,
           content: data.content,
           isMine: data.sender_id === user.id,

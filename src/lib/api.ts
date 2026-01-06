@@ -497,7 +497,7 @@ export interface ChatWebSocketMessage {
 }
 
 export interface ChatWebSocketResponse {
-  message_id: string;
+  id: string;
   room_id: string;
   sender_id: string;
   content: string;
